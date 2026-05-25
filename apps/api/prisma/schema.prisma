@@ -1,0 +1,172 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  username     String        @unique @db.VarChar(64)
+  email        String        @unique @db.VarChar(255)
+  passwordHash String        @map("password_hash") @db.VarChar(255)
+  telegramId   Int?          @unique @map("telegram_id")
+  avatar       String?       @db.VarChar(512)
+  settings     Json          @default("{}")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  sessions          Session[]
+  watchlists        Watchlist[]
+  screenerPresets   ScreenerPreset[]
+  chartLayouts      ChartLayout[]
+  alertRules        AlertRule[]
+  alerts            Alert[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique @db.VarChar(1024)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+model Watchlist {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String   @db.VarChar(128)
+  symbols   String[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("watchlists")
+}
+
+model ScreenerPreset {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  name          String   @db.VarChar(128)
+  filters       Json
+  sortBy        String   @default("volume24h") @map("sort_by") @db.VarChar(64)
+  sortDirection String   @default("desc") @map("sort_direction") @db.VarChar(8)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("screener_presets")
+}
+
+model ChartLayout {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String   @db.VarChar(128)
+  layout    Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("chart_layouts")
+}
+
+model AlertRule {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  type       String   @db.VarChar(64)
+  symbol     String?  @db.VarChar(32)
+  exchange   String?  @db.VarChar(32)
+  condition  Json
+  deliveries String[]
+  enabled    Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([symbol])
+  @@map("alert_rules")
+}
+
+model Alert {
+  id        String    @id @default(uuid())
+  userId    String?   @map("user_id")
+  type      String    @db.VarChar(64)
+  symbol    String    @db.VarChar(32)
+  exchange  String?   @db.VarChar(32)
+  title     String    @db.VarChar(255)
+  message   String    @db.Text
+  severity  String    @default("medium") @db.VarChar(16)
+  data      Json?
+  read      Boolean   @default(false)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([symbol])
+  @@index([createdAt])
+  @@index([userId, read])
+  @@map("alerts")
+}
+
+model StoredCandle {
+  id         String @id @default(uuid())
+  symbol     String @db.VarChar(32)
+  exchange   String @db.VarChar(32)
+  timeframe  String @db.VarChar(8)
+  timestamp  BigInt
+  open       Float
+  high       Float
+  low        Float
+  close      Float
+  volume     Float
+  trades     Int
+  buyVolume  Float @map("buy_volume")
+  sellVolume Float @map("sell_volume")
+
+  @@unique([symbol, exchange, timeframe, timestamp])
+  @@index([symbol, exchange, timeframe])
+  @@index([timestamp])
+  @@map("stored_candles")
+}
+
+model DetectedPattern {
+  id           String   @id @default(uuid())
+  symbol       String   @db.VarChar(32)
+  exchange     String   @db.VarChar(32)
+  type         String   @db.VarChar(64)
+  timeframe    String   @db.VarChar(8)
+  confidence   Float
+  description  String   @db.Text
+  points       Json
+  direction    String   @db.VarChar(16)
+  targetPrice  Float?   @map("target_price")
+  stopLoss     Float?   @map("stop_loss")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([symbol, exchange])
+  @@index([type])
+  @@index([timeframe])
+  @@index([createdAt])
+  @@index([symbol, exchange, timeframe, type])
+  @@map("detected_patterns")
+}

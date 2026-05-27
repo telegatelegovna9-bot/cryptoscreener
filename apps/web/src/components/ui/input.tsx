@@ -1,30 +1,44 @@
-import { type InputHTMLAttributes, forwardRef, type ElementType } from 'react';
-import { cn } from '@/lib/cn';
+import { forwardRef, type InputHTMLAttributes } from "react";
+import { cn } from "@/lib/cn";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  icon?: ElementType;
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  icon?: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, icon: Icon, ...props }, ref) => (
-    <div className="relative">
-      {Icon && (
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted pointer-events-none" />
-      )}
-      <input
-        ref={ref}
-        className={cn(
-          'h-9 w-full bg-input border border-border rounded-lg text-sm text-foreground placeholder:text-foreground-secondary',
-          'focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary',
-          'transition-colors duration-150',
-          Icon ? 'pl-9 pr-3' : 'px-3',
-          className
+  ({ className, icon, suffix, type = "text", ...props }, ref) => {
+    return (
+      <div className="relative flex items-center">
+        {icon && (
+          <div className="absolute left-3 text-foreground-secondary pointer-events-none">
+            {icon}
+          </div>
         )}
-        {...props}
-      />
-    </div>
-  )
+        <input
+          type={type}
+          ref={ref}
+          className={cn(
+            "flex h-9 w-full rounded-lg border border-border-default bg-bg-surface px-3 text-sm text-foreground",
+            "placeholder:text-foreground-secondary",
+            "focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50",
+            "transition-all duration-150",
+            "disabled:opacity-50 disabled:cursor-not-allowed",
+            icon && "pl-9",
+            suffix && "pr-9",
+            className
+          )}
+          {...props}
+        />
+        {suffix && (
+          <div className="absolute right-3 text-foreground-secondary">
+            {suffix}
+          </div>
+        )}
+      </div>
+    );
+  }
 );
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export { Input };

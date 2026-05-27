@@ -1,40 +1,51 @@
-import { type HTMLAttributes, forwardRef } from 'react';
-import { cn } from '@/lib/cn';
+import { forwardRef, type HTMLAttributes } from "react";
+import { cn } from "@/lib/cn";
+import { cva, type VariantProps } from "class-variance-authority";
 
-type BadgeVariant =
-  | 'default'
-  | 'secondary'
-  | 'success'
-  | 'destructive'
-  | 'warning'
-  | 'outline';
+const badgeVariants = cva(
+  "inline-flex items-center gap-1 font-medium transition-colors select-none",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-bg-surface text-foreground-muted border border-border-default",
+        primary: "bg-primary-glow text-primary border border-primary/20",
+        bullish:
+          "bg-bullish-bg text-bullish border border-bullish/15",
+        bearish:
+          "bg-bearish-bg text-bearish border border-bearish/15",
+        warning:
+          "bg-warning-bg text-warning border border-warning/15",
+        accent: "bg-primary/20 text-primary-hover border border-primary/25",
+      },
+      size: {
+        sm: "h-5 px-1.5 text-[10px] rounded",
+        md: "h-6 px-2 text-xs rounded-md",
+        lg: "h-7 px-2.5 text-xs rounded-md",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "md",
+    },
+  }
+);
 
-interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: BadgeVariant;
-}
-
-const variantClasses: Record<BadgeVariant, string> = {
-  default: 'bg-primary text-white',
-  secondary: 'bg-muted text-foreground-muted',
-  success: 'bg-bullish/15 text-bullish border border-bullish/20',
-  destructive: 'bg-bearish/15 text-bearish border border-bearish/20',
-  warning: 'bg-warning/15 text-warning border border-warning/20',
-  outline: 'border border-border text-foreground-muted',
-};
+export interface BadgeProps
+  extends HTMLAttributes<HTMLSpanElement>,
+    VariantProps<typeof badgeVariants> {}
 
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant = 'default', ...props }, ref) => (
-    <span
-      ref={ref}
-      className={cn(
-        'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium whitespace-nowrap',
-        variantClasses[variant],
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, variant, size, ...props }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={cn(badgeVariants({ variant, size, className }))}
+        {...props}
+      />
+    );
+  }
 );
-Badge.displayName = 'Badge';
+Badge.displayName = "Badge";
 
-export { Badge, type BadgeVariant };
+export { Badge, badgeVariants };

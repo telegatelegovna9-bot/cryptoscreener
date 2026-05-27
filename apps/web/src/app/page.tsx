@@ -1,17 +1,27 @@
-'use client';
+"use client";
 
-import { CoinList } from '@/components/coin-list';
-import { ChartGrid } from '@/components/chart-grid';
+import { Navbar } from "@/components/landing/Navbar";
+import { Hero } from "@/components/landing/Hero";
+import { TickerTape } from "@/components/landing/TickerTape";
+import { Features } from "@/components/landing/Features";
+import { LivePreview } from "@/components/landing/LivePreview";
+import { Stats } from "@/components/landing/Stats";
+import { Pricing } from "@/components/landing/Pricing";
+import { CTA } from "@/components/landing/CTA";
+import { Footer } from "@/components/landing/Footer";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className="flex h-full">
-      <div className="w-[480px] flex-shrink-0 border-r border-border overflow-hidden">
-        <CoinList />
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <ChartGrid />
-      </div>
-    </div>
+    <main className="min-h-screen">
+      <Navbar />
+      <Hero />
+      <TickerTape />
+      <Features />
+      <LivePreview />
+      <Stats />
+      <Pricing />
+      <CTA />
+      <Footer />
+    </main>
   );
 }

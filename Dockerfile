@@ -39,8 +39,8 @@ ENV NODE_ENV=production
 # Generate Prisma client first
 RUN cd apps/api && pnpm exec prisma generate
 
-# Build all packages (API + Web + Shared)
-RUN pnpm turbo build
+# Build all packages (API + Web + Shared) — force rebuild, clear turbo cache
+RUN rm -rf .turbo node_modules/.cache && pnpm turbo build --force
 
 # --- Stage 3: Production image ---
 FROM node:22-slim AS runner

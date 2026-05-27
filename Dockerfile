@@ -1,13 +1,6 @@
 # ============================================
 # CRYPTO SCREENER - PRODUCTION DOCKERFILE
 # Multi-stage build for Railway deployment
-#
-# Architecture:
-#   NestJS (port $PORT) ← Railway's public port
-#     ├── /api/* → NestJS API handlers
-#     ├── /docs → Swagger UI
-#     ├── /health → Health check
-#     └── /* → proxy → Next.js (port 3000, internal)
 # ============================================
 
 # --- Stage 1: Install dependencies ---
@@ -15,12 +8,12 @@ FROM node:22-slim AS deps
 RUN corepack enable && apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json .npmrc ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
 COPY packages/shared/package.json ./packages/shared/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile 2>&1 || pnpm install 2>&1
 
 # --- Stage 2: Build everything ---
 FROM node:22-slim AS builder
@@ -36,16 +29,20 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Generate Prisma client first
-RUN cd apps/api && pnpm exec prisma generate
+# Build shared package first
+RUN echo ">>> Building shared package..." && cd packages/shared && pnpm build 2>&1
 
-# Build all packages (API + Web + Shared) — force rebuild, clear turbo cache
-RUN rm -rf .turbo node_modules/.cache && pnpm turbo build --force
+# Generate Prisma client
+RUN echo ">>> Generating Prisma client..." && cd apps/api && pnpm exec prisma generate 2>&1
+
+# Build web app
+RUN echo ">>> Building web app..." && cd apps/web && pnpm build 2>&1
+
+# Build API
+RUN echo ">>> Building API..." && cd apps/api && pnpm build 2>&1
 
 # Fix standalone: copy real node_modules into standalone output
-# (pnpm symlinks break @vercel/nft file tracing, so standalone has empty node_modules)
 RUN cp -r /app/apps/web/node_modules /app/apps/web/.next/standalone/apps/web/node_modules 2>/dev/null || true
-# Also copy shared package into standalone
 RUN mkdir -p /app/apps/web/.next/standalone/packages/shared && cp -r /app/packages/shared/dist /app/apps/web/.next/standalone/packages/shared/dist 2>/dev/null || true
 RUN cp /app/packages/shared/package.json /app/apps/web/.next/standalone/packages/shared/package.json 2>/dev/null || true
 
@@ -64,8 +61,6 @@ COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 
 # --- Copy Next.js standalone ---
-# Standalone output goes to /app/ — server.js ends up at /app/apps/web/server.js
-# node_modules are already baked into standalone by the RUN cp above
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /app/apps/web/public ./apps/web/public
@@ -85,7 +80,7 @@ RUN chmod +x ./scripts/start.sh
 
 EXPOSE 3000 4000
 
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --tries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-4000}/api/health || exit 1
 
 ENTRYPOINT ["tini", "--"]

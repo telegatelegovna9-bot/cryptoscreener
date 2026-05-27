@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useCoinDetailStore } from '@/stores/coin-detail';
-import { DetectedPattern, Exchange, PatternType, Timeframe } from '@crypto-screener/shared';
+import { DetectedPattern, Exchange, PatternType, Timeframe } from '@/types/shared';
 import { Triangle, Flag, RectangleHorizontal, TrendingUp, TrendingDown, Minus, Loader2 } from 'lucide-react';
 
 const PATTERN_ICONS: Record<string, typeof Triangle> = {

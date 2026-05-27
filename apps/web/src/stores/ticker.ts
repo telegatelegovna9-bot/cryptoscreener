@@ -1,10 +1,10 @@
-// ============================================
+﻿// ============================================
 // Ticker Store (Zustand)
 // Manages real-time ticker data
 // ============================================
 
 import { create } from 'zustand';
-import { Exchange, Ticker } from '@crypto-screener/shared';
+import { Exchange, Ticker } from '@/types/shared';
 
 interface TickerState {
   tickers: Map<string, Ticker>;

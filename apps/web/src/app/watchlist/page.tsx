@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useWatchlistStore } from '@/stores/watchlist';
 import { useTickerStore } from '@/stores/ticker';
 import { useCoinDetailStore } from '@/stores/coin-detail';
 import { Star, Plus, X, Edit2, Trash2 } from 'lucide-react';
-import { Exchange } from '@crypto-screener/shared';
+import { Exchange } from '@/types/shared';
 
 export default function WatchlistPage() {
   const { watchlists, activeWatchlistId, addWatchlist, removeWatchlist, renameWatchlist, removeSymbol, setActiveWatchlist } = useWatchlistStore();

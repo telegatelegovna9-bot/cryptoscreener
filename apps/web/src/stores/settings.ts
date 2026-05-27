@@ -1,11 +1,11 @@
-// ============================================
+﻿// ============================================
 // Settings Store (Zustand with persist)
 // User preferences and chart settings
 // ============================================
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Exchange, Timeframe } from '@crypto-screener/shared';
+import { Exchange, Timeframe } from '@/types/shared';
 
 interface SettingsState {
   theme: 'dark' | 'light';

@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useMemo } from 'react';
 import { cn } from '@/lib/cn';
-import type { LiquidityHeatmapData, LiquidityLevel } from '@crypto-screener/shared';
+import type { LiquidityHeatmapData, LiquidityLevel } from '@/types/shared';
 
 interface HeatmapViewProps {
   symbol?: string;

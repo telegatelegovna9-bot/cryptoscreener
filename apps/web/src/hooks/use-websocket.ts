@@ -1,10 +1,10 @@
-// ============================================
+﻿// ============================================
 // useWebSocket Hook
 // Socket.IO connection with ticker + alert subs
 // ============================================
 
 import { useEffect, useState, useCallback } from 'react';
-import { Ticker, WSTickerUpdate, WSAlert } from '@crypto-screener/shared';
+import { Ticker, WSTickerUpdate, WSAlert } from '@/types/shared';
 import { wsClient } from '@/lib/ws';
 import { useTickerStore } from '@/stores/ticker';
 import { useAlertStore } from '@/stores/alert';

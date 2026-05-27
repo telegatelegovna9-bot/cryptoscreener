@@ -1,10 +1,10 @@
-// ============================================
+﻿// ============================================
 // Grid Store (Zustand)
 // Chart grid layout management
 // ============================================
 
 import { create } from 'zustand';
-import { Exchange, Timeframe } from '@crypto-screener/shared';
+import { Exchange, Timeframe } from '@/types/shared';
 
 interface GridCell {
   symbol: string;

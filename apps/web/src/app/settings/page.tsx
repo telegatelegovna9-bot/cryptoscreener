@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useSettingsStore } from '@/stores/settings';
-import { Exchange, Timeframe } from '@crypto-screener/shared';
+import { Exchange, Timeframe } from '@/types/shared';
 import { Moon, Sun, Bell, Monitor, Send } from 'lucide-react';
 
 export default function SettingsPage() {

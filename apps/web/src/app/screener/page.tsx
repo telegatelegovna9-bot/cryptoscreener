@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useTickers } from '@/hooks/use-tickers';
 import { useScreenerStore } from '@/stores/screener';
 import { useCoinDetailStore } from '@/stores/coin-detail';
-import { Exchange, Ticker } from '@crypto-screener/shared';
+import { Exchange, Ticker } from '@/types/shared';
 import { Search, X, TrendingUp, TrendingDown, BarChart3, Activity, Zap, Droplets } from 'lucide-react';
 
 const QUICK_FILTERS = [

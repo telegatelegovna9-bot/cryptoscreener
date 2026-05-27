@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef, useMemo, useState, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -9,8 +9,8 @@ import { useCoinDetailStore } from '@/stores/coin-detail';
 import { useWatchlistStore } from '@/stores/watchlist';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Exchange } from '@crypto-screener/shared';
-import type { Ticker } from '@crypto-screener/shared';
+import { Exchange } from '@/types/shared';
+import type { Ticker } from '@/types/shared';
 
 const ROW_HEIGHT = 40;
 const OVERSCAN = 10;

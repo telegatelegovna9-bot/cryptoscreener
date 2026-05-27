@@ -1,11 +1,11 @@
-// ============================================
+﻿// ============================================
 // useTickers Hook
 // React Query hook for fetching ticker data
 // ============================================
 
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Exchange, Ticker } from '@crypto-screener/shared';
+import { Exchange, Ticker } from '@/types/shared';
 import { api } from '@/lib/api';
 import { useTickerStore } from '@/stores/ticker';
 

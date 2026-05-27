@@ -1,10 +1,10 @@
-// ============================================
+﻿// ============================================
 // Screener Store (Zustand)
 // Filters, search, sorting for screener
 // ============================================
 
 import { create } from 'zustand';
-import { Exchange, Ticker } from '@crypto-screener/shared';
+import { Exchange, Ticker } from '@/types/shared';
 
 interface ScreenerFilter {
   field: string;

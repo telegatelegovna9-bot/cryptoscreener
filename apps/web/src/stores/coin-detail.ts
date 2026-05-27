@@ -1,10 +1,10 @@
-// ============================================
+﻿// ============================================
 // Coin Detail Store (Zustand)
 // Controls the coin detail panel visibility
 // ============================================
 
 import { create } from 'zustand';
-import { Exchange, Timeframe } from '@crypto-screener/shared';
+import { Exchange, Timeframe } from '@/types/shared';
 
 interface CoinDetailState {
   isOpen: boolean;

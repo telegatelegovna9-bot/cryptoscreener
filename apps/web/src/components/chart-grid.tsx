@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { cn } from '@/lib/cn';
 import { useGridStore } from '@/stores/grid';
@@ -7,7 +7,7 @@ import { useTickerStore } from '@/stores/ticker';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TradingChart } from '@/components/trading-chart';
-import { Timeframe } from '@crypto-screener/shared';
+import { Timeframe } from '@/types/shared';
 
 const gridPresets = [
   { label: '1', cols: 1, rows: 1 },

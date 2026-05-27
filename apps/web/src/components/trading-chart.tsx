@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
 import {
@@ -8,7 +8,7 @@ import {
   type CandlestickData,
   type Time,
 } from 'lightweight-charts';
-import type { Exchange, Timeframe } from '@crypto-screener/shared';
+import type { Exchange, Timeframe } from '@/types/shared';
 
 interface TradingChartProps {
   symbol: string;

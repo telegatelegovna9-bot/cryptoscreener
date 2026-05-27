@@ -1,8 +1,17 @@
+'use client';
+
+import { CoinList } from '@/components/coin-list';
+import { ChartGrid } from '@/components/chart-grid';
+
 export default function Home() {
   return (
-    <main>
-      <h1>Crypto Screener</h1>
-      <p>Real-time cryptocurrency analytics platform</p>
-    </main>
+    <div className="flex h-full">
+      <div className="w-[480px] flex-shrink-0 border-r border-border overflow-hidden">
+        <CoinList />
+      </div>
+      <div className="flex-1 overflow-hidden">
+        <ChartGrid />
+      </div>
+    </div>
   );
 }

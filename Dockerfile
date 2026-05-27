@@ -57,9 +57,10 @@ COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 
 # --- Copy Next.js standalone ---
+# Standalone preserves project path: standalone/app/apps/web/server.js
 COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder /app/apps/web/.next/static ./app/apps/web/.next/static
+COPY --from=builder /app/apps/web/public ./app/apps/web/public
 
 # --- Copy shared package ---
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist

@@ -5,7 +5,11 @@ PROXY_PORT="${PORT:-8080}"
 
 echo ">>> Running Prisma migrations..."
 cd /app/apps/api
-npx prisma migrate deploy 2>&1 || npx prisma db push --skip-generate 2>&1 || echo ">>> Migration skipped"
+npx prisma migrate deploy 2>&1 || {
+  echo ">>> Database has existing tables, baselining..."
+  npx prisma migrate resolve --applied 0_init 2>&1
+  npx prisma migrate deploy 2>&1 || echo ">>> Migration skipped (non-fatal)"
+}
 
 # Find Next.js server.js — standalone preserves project structure
 NEXTJS_DIR=""

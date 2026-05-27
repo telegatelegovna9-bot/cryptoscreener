@@ -9,7 +9,7 @@ function proxy(req, res) {
   const targetPort = isApi ? API_PORT : NEXT_PORT;
 
   const options = {
-    hostname: 'localhost',
+    hostname: '127.0.0.1',
     port: targetPort,
     path: req.url,
     method: req.method,

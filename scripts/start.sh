@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export NODE_ENV=production
+export HOSTNAME=0.0.0.0
 PROXY_PORT="${PORT:-8080}"
 
 echo ">>> Running Prisma migrations..."
@@ -13,17 +14,17 @@ npx prisma migrate deploy 2>&1 || {
 
 echo ">>> Starting Next.js on port 3000..."
 cd /app/apps/web
-PORT=3000 node server.js 2>&1 &
+PORT=3000 node server.js &
 NEXT_PID=$!
 
 echo ">>> Starting NestJS API on port 4001..."
 cd /app
-PORT=4001 node apps/api/dist/main.js 2>&1 &
+PORT=4001 node apps/api/dist/main.js &
 API_PID=$!
 
 echo ">>> Starting proxy on port $PROXY_PORT..."
 cd /app
-PORT=$PROXY_PORT node scripts/proxy.js 2>&1 &
+PORT=$PROXY_PORT node scripts/proxy.js &
 PROXY_PID=$!
 
 wait

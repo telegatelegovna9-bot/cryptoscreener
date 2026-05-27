@@ -15,11 +15,11 @@ find /app -name "main.js" -maxdepth 5 2>/dev/null
 # Run Prisma migrations
 echo "Running Prisma migrations..."
 cd /app/apps/api
-if node -e "require('@prisma/client')" 2>/dev/null; then
+if [ -d "node_modules/.prisma" ] || [ -d "node_modules/@prisma/client" ]; then
   echo "Prisma client found, running migrate deploy..."
-  node ./node_modules/.bin/prisma migrate deploy 2>&1 || {
+  npx prisma migrate deploy 2>&1 || {
     echo "Migrate deploy failed, trying db push..."
-    node ./node_modules/.bin/prisma db push --skip-generate 2>&1 || echo "DB push also failed (non-fatal)"
+    npx prisma db push --skip-generate 2>&1 || echo "DB push also failed (non-fatal)"
   }
 else
   echo "Prisma client not found, skipping migrations"

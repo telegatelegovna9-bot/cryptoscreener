@@ -42,6 +42,13 @@ RUN cd apps/api && pnpm exec prisma generate
 # Build all packages (API + Web + Shared) — force rebuild, clear turbo cache
 RUN rm -rf .turbo node_modules/.cache && pnpm turbo build --force
 
+# Fix standalone: copy real node_modules into standalone output
+# (pnpm symlinks break @vercel/nft file tracing, so standalone has empty node_modules)
+RUN cp -r /app/apps/web/node_modules /app/apps/web/.next/standalone/apps/web/node_modules 2>/dev/null || true
+# Also copy shared package into standalone
+RUN mkdir -p /app/apps/web/.next/standalone/packages/shared && cp -r /app/packages/shared/dist /app/apps/web/.next/standalone/packages/shared/dist 2>/dev/null || true
+RUN cp /app/packages/shared/package.json /app/apps/web/.next/standalone/packages/shared/package.json 2>/dev/null || true
+
 # --- Stage 3: Production image ---
 FROM node:22-slim AS runner
 RUN apt-get update && apt-get install -y --no-install-recommends wget tini bash openssl && rm -rf /var/lib/apt/lists/*
@@ -58,11 +65,10 @@ COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 
 # --- Copy Next.js standalone ---
 # Standalone output goes to /app/ — server.js ends up at /app/apps/web/server.js
+# node_modules are already baked into standalone by the RUN cp above
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /app/apps/web/public ./apps/web/public
-# Ensure web app node_modules are available for standalone server.js
-COPY --from=builder /app/apps/web/node_modules ./apps/web/node_modules
 
 # --- Copy shared package ---
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist

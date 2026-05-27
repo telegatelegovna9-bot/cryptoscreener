@@ -7,9 +7,22 @@ echo ">>> Running Prisma migrations..."
 cd /app/apps/api
 npx prisma migrate deploy 2>&1 || npx prisma db push --skip-generate 2>&1 || echo ">>> Migration skipped"
 
-echo ">>> Starting Next.js on port 3000..."
-cd /app/apps/web
-PORT=3000 node server.js &
+# Find Next.js server.js — standalone preserves project structure
+NEXTJS_DIR=""
+for dir in /app/app/apps/web /app/apps/web; do
+  if [ -f "$dir/server.js" ]; then
+    NEXTJS_DIR="$dir"
+    break
+  fi
+done
+
+if [ -n "$NEXTJS_DIR" ]; then
+  echo ">>> Starting Next.js on port 3000 from $NEXTJS_DIR..."
+  cd "$NEXTJS_DIR"
+  PORT=3000 node server.js &
+else
+  echo ">>> ERROR: Next.js server.js not found!"
+fi
 
 echo ">>> Starting NestJS API on port 4001..."
 cd /app

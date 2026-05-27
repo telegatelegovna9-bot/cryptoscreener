@@ -7,13 +7,16 @@ const API_PORT = 4001;
 function proxy(req, res) {
   const isApi = req.url.startsWith('/api') || req.url.startsWith('/docs') || req.url.startsWith('/health');
   const targetPort = isApi ? API_PORT : NEXT_PORT;
+  const target = isApi ? 'NestJS' : 'Next.js';
+
+  console.log(`[proxy] ${req.method} ${req.url} -> ${target}:${targetPort}`);
 
   const options = {
     hostname: 'localhost',
     port: targetPort,
     path: req.url,
     method: req.method,
-    headers: req.headers,
+    headers: { ...req.headers, host: `localhost:${targetPort}` },
   };
 
   const proxyReq = http.request(options, (proxyRes) => {
@@ -22,7 +25,7 @@ function proxy(req, res) {
   });
 
   proxyReq.on('error', (err) => {
-    console.error(`Proxy error: ${err.message}`);
+    console.error(`[proxy] Error forwarding to ${target}:${targetPort} - ${err.message}`);
     if (!res.headersSent) {
       res.writeHead(502);
       res.end('Bad Gateway');
@@ -33,6 +36,6 @@ function proxy(req, res) {
 }
 
 const server = http.createServer(proxy);
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Proxy listening on port ${PORT}`);
 });

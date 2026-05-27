@@ -62,7 +62,7 @@ COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /app/apps/web/public ./apps/web/public
 
 # --- Copy shared package ---
-COPY --from=builder /app/packages/shared/src ./packages/shared/src
+COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/shared/package.json ./packages/shared/
 
 # --- Copy root dependencies ---

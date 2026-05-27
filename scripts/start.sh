@@ -1,7 +1,14 @@
 #!/bin/bash
 set -e
 
-PORT="${PORT:-4000}"
+# Preserve Railway's PORT for the proxy, fix internal ports
+PROXY_PORT="${PORT:-4000}"
+export NODE_ENV=production
+
+# Run Prisma migrations
+echo "Running Prisma migrations..."
+cd /app/apps/api
+npx prisma migrate deploy 2>&1 || echo "Migration warning (non-fatal)"
 
 echo "Starting Next.js on port 3000..."
 cd /app/apps/web
@@ -10,11 +17,11 @@ NEXT_PID=$!
 
 echo "Starting NestJS API on port 4001..."
 cd /app
-node apps/api/dist/main.js &
+PORT=4001 node apps/api/dist/main.js &
 API_PID=$!
 
-echo "Starting proxy on port $PORT..."
-node /app/scripts/proxy.js &
+echo "Starting proxy on port $PROXY_PORT..."
+PORT=$PROXY_PORT node /app/scripts/proxy.js &
 PROXY_PID=$!
 
 trap "kill $NEXT_PID $API_PID $PROXY_PID 2>/dev/null" SIGTERM SIGINT

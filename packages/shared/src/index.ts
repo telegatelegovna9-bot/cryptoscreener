@@ -89,15 +89,18 @@ export const DEFAULT_SYMBOLS = [
 // --- Interfaces ---
 
 export interface Candle {
-  symbol: string;
-  exchange: Exchange;
-  timeframe: Timeframe;
+  symbol?: string;
+  exchange?: Exchange;
+  timeframe?: Timeframe;
   timestamp: number;
   open: number;
   high: number;
   low: number;
   close: number;
   volume: number;
+  trades: number;
+  buyVolume: number;
+  sellVolume: number;
 }
 
 export interface Ticker {
@@ -121,7 +124,9 @@ export interface Ticker {
 
 export interface OrderBookLevel {
   price: number;
-  amount: number;
+  amount?: number;
+  quantity: number;
+  count: number;
 }
 
 export interface OrderBook {
@@ -136,7 +141,8 @@ export interface FundingRate {
   symbol: string;
   exchange: Exchange;
   rate: number;
-  nextTime: number;
+  nextTime?: number;
+  nextFundingTime: number;
   timestamp: number;
 }
 
@@ -144,19 +150,25 @@ export interface OpenInterest {
   symbol: string;
   exchange: Exchange;
   value: number;
+  valueChange24h: number;
+  valueChangePercent24h?: number;
   timestamp: number;
 }
 
 export interface Trade {
+  id?: string;
   symbol: string;
   exchange: Exchange;
   side: 'buy' | 'sell';
   price: number;
-  amount: number;
+  amount?: number;
+  quantity: number;
   timestamp: number;
+  isLiquidation?: boolean;
 }
 
 export interface DetectedPattern {
+  id?: string;
   type: PatternType;
   symbol: string;
   exchange: Exchange;
@@ -166,6 +178,8 @@ export interface DetectedPattern {
   points: { timestamp: number; price: number }[];
   description: string;
   timestamp: number;
+  targetPrice?: number | null;
+  stopLoss?: number | null;
 }
 
 export interface ScreenerFilter {
@@ -190,14 +204,17 @@ export interface ScreenerPreset {
   filters?: ScreenerFilter[];
   sortBy?: string;
   sortDirection?: SortDirection;
+  createdAt?: number;
 }
 
 export interface PaginatedResponse<T> {
-  data: T[];
+  data?: T[];
+  items: T[];
   total: number;
   page: number;
   pageSize: number;
-  totalPages: number;
+  totalPages?: number;
+  hasMore: boolean;
 }
 
 export interface UserSettings {
@@ -222,10 +239,15 @@ export interface UserSettings {
 
 export interface LiquidityLevel {
   price: number;
-  bidVolume: number;
-  askVolume: number;
-  totalVolume: number;
-  imbalance: number;
+  quantity: number;
+  side: 'bid' | 'ask';
+  type: 'limit' | 'spoof' | 'iceberg' | 'absorption';
+  confidence: number;
+  timestamp: number;
+  bidVolume?: number;
+  askVolume?: number;
+  totalVolume?: number;
+  imbalance?: number;
 }
 
 export interface LiquidityHeatmapData {
@@ -244,18 +266,26 @@ export interface WSEvent<T> {
 }
 
 export interface WSTickerUpdate {
+  symbol: string;
   ticker: Ticker;
 }
 
 export interface WSCandleUpdate {
+  symbol: string;
+  exchange: Exchange;
+  timeframe: Timeframe;
   candle: Candle;
 }
 
 export interface WSOrderBookUpdate {
+  symbol: string;
+  exchange: Exchange;
   orderBook: OrderBook;
 }
 
 export interface WSTradeUpdate {
+  symbol: string;
+  exchange: Exchange;
   trade: Trade;
 }
 

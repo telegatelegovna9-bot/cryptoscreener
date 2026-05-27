@@ -5,7 +5,7 @@ PORT="${PORT:-4000}"
 
 echo "Starting Next.js on port 3000..."
 cd /app/apps/web
-node server.js &
+PORT=3000 node server.js &
 NEXT_PID=$!
 
 echo "Starting NestJS API on port 4001..."
